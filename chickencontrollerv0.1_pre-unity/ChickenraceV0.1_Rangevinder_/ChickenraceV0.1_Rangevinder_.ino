@@ -50,7 +50,7 @@ void loop() {
     if(unityReady == true){
       
       if(left == true){
-            Serial.println("1,1,0,1");//l1 
+            Serial.println("8,0");//l1 
             
         }
     }
