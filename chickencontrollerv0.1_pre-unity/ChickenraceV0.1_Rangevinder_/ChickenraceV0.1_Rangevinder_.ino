@@ -5,18 +5,23 @@ long duration;
 bool unityReady;
 //
 
-const int Trig_pin = 15;
-const int Echo_pin = 14;
+
 //ldrtest
-const int ldrPin = A2;
+const int ldrLPin = A2;
+const int ldrRPin = A1;
 //controlls
 bool left;
 bool right;
 float forward;
+//defines
+#define DEAD_ZONE (1000) 
+//
+
 void setup() {
   // put your setup code here, to run once:
-  pinMode(Trig_pin,OUTPUT);
-  pinMode(Echo_pin,INPUT);
+
+  pinMode(ldrLPin, INPUT);
+  pinMode(ldrRPin, INPUT);
   //unity communication
   unityReady = false;
   Serial.begin(115200);
@@ -30,40 +35,37 @@ void loop() {
     char inByte = Serial.read();
 
     if(inByte == 'a'){
-        int adc0 = analogRead(14);
-        int adc1 = analogRead(15);
         unityReady = true;
-       
-        //Serial.print("connected");
-        
-        // construct string from read values
-        
-        //String s0 = "";
-        //String s1 = s0 + adc0;
-        //String s2 = s1 + ",";
-        //String s3 = s2 + adc1;
+        Serial.println("connected");        
+    }
+    if(unityReady == true){
+      int leftint;
+      int rightint;
+      String komma = ",";
+      //int speedint;//speed
+      
 
         //Serial.println(s3);
-        
-    }
-
-    if(unityReady == true){
-      
       if(left == true){
-            Serial.println("8,0");//l1 
+           
+            leftint = 1;
             
-        }
+      }else{
+        leftint = 0;
+      }
+
+        
+      //send2unity
+   
+      Serial.print(leftint);//l1 
+      Serial.print(",");
+      Serial.println(rightint);
+      //
     }
   }
   
   //Buttons============================
-  digitalWrite(Trig_pin, LOW);
-  delayMicroseconds(2);//replace delay with timer
-  digitalWrite(Trig_pin, HIGH);
-  delayMicroseconds(10);//replace delay with timer
-  digitalWrite(Trig_pin, LOW);
-  duration = pulseIn(Echo_pin,HIGH);
-  distanceL = duration /29 / 2;
+
     if(distanceL <= 10){
       left = true; 
        
@@ -71,11 +73,29 @@ void loop() {
       left = false;
     }
   //ldr============
-  //int ldr1status = analogRead(ldrPin);
- // Serial.println(ldr1status);
-  //=============
- //print("DistanceL: ");
- 
- // println(distanceL);
   
+  int ldrLraw = analogRead(ldrLPin);
+  int ldrLfinal;
+  int diffL = ldrLraw - ldrLfinal;
+
+  if(abs(diffL) > DEAD_ZONE){
+    
+    ldrLfinal = ldrLraw;
+     Serial.println(ldrLfinal);
+     Serial.print(",");
+  }
+   int ldrRraw = analogRead(ldrRPin);
+  int ldrRfinal;
+  int diffR = ldrRraw - ldrRfinal;
+
+  if(abs(diffR) > DEAD_ZONE){
+    
+    ldrRfinal = ldrRraw;
+     Serial.println(ldrRfinal);
+    
+  }
+ 
+  //=============
+
+  delay(10);
 }
