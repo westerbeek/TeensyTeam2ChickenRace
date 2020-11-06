@@ -1,4 +1,8 @@
-
+//defines
+#define DEAD_ZONE (500) 
+//INCLUDES
+#include <IRremote.h>
+//
 long duration;
 //
 //send2unity
@@ -11,19 +15,25 @@ long duration;
 //ldrtest
 const int ldrLPin = A2;
 const int ldrRPin = A1;
+const int infraled = 13;
+const int receiverinfra = 12;
+decode_results results;
+IRsend irsend;
+IRrecv irrecv(receiverinfra);
 //controlls
 bool left;
 bool right;
 float forward;
-//defines
-#define DEAD_ZONE (500) 
-//
+
 
 void setup() {
   // put your setup code here, to run once:
 
   pinMode(ldrLPin, INPUT);
   pinMode(ldrRPin, INPUT);
+   pinMode(infraled, OUTPUT);
+   pinMode(receiverinfra, INPUT);
+   irrecv.enableIRIn();
   //unity communication
   Serial.begin(115200);
 }
@@ -31,7 +41,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   //Unity===============
-  unityconnection();
+  //unityconnection();
  
   ldrs();
   spinner();
@@ -41,6 +51,15 @@ void loop() {
   
 
   
+}
+void spinner(){
+  //here comes the spinn
+  digitalWrite(13, HIGH);
+    if (irrecv.decode(&results)) //if the ir receiver module receiver data
+    {        
+    Serial.println(results.bits); //print the bits
+    irrecv.resume();    // Receive the next value 
+  }  
 }
 void ldrs(){
   //ldr left
@@ -70,18 +89,16 @@ void ldrs(){
   //=============
   delay(10);
 }
-void spinner(){
-  //here comes the spinn
-}
+
 void unityconnection() {
  
  if(Serial.available()){
     char inByte = Serial.read();
 
     if(inByte == 'a'){  
-        Serial.print(leftint);//l1 
-        Serial.print(",");
-        Serial.println(rightint);     
+      //  Serial.print(leftint);//l1 
+      //  Serial.print(",");
+      //  Serial.println(rightint);     
     }
     
       
