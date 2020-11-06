@@ -15,11 +15,9 @@ long duration;
 //ldrtest
 const int ldrLPin = A2;
 const int ldrRPin = A1;
-const int infraled = 13;
+
 const int receiverinfra = 12;
-decode_results results;
-IRsend irsend;
-IRrecv irrecv(receiverinfra);
+
 //controlls
 bool left;
 bool right;
@@ -31,9 +29,7 @@ void setup() {
 
   pinMode(ldrLPin, INPUT);
   pinMode(ldrRPin, INPUT);
-   pinMode(infraled, OUTPUT);
-   pinMode(receiverinfra, INPUT);
-   irrecv.enableIRIn();
+  pinMode(receiverinfra, INPUT);
   //unity communication
   Serial.begin(115200);
 }
@@ -54,12 +50,14 @@ void loop() {
 }
 void spinner(){
   //here comes the spinn
-  digitalWrite(13, HIGH);
-    if (irrecv.decode(&results)) //if the ir receiver module receiver data
-    {        
-    Serial.println(results.bits); //print the bits
-    irrecv.resume();    // Receive the next value 
-  }  
+  //digitalWrite(13, HIGH);
+  int reed_status = digitalRead(12);
+  if (reed_status == 1){
+    Serial.println("1");
+  } else{
+    Serial.println("0");
+  }
+
 }
 void ldrs(){
   //ldr left
