@@ -1,14 +1,16 @@
 //defines
-#define DEAD_ZONE (500) 
+#define DEAD_ZONE (50) 
 //INCLUDES
 #include <IRremote.h>
 //
 long duration;
 //
 //send2unity
+   int oldreed;
    int leftint;
    int rightint;
-   int speed;
+   int speedint;
+   int spd;//speedholder
    String komma = ",";
 //
 
@@ -17,19 +19,15 @@ const int ldrLPin = A2;
 const int ldrRPin = A1;
 
 const int receiverinfra = 12;
-
-//controlls
-bool left;
-bool right;
-float forward;
+float maxtimer = 100;
 
 
 void setup() {
   // put your setup code here, to run once:
-
+  oldreed = 0;
   pinMode(ldrLPin, INPUT);
   pinMode(ldrRPin, INPUT);
-  pinMode(receiverinfra, INPUT);
+  pinMode(receiverinfra, INPUT_PULLUP);
   //unity communication
   Serial.begin(115200);
 }
@@ -37,11 +35,11 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   //Unity===============
-  //unityconnection();
+  
  
   ldrs();
   spinner();
-
+  unityconnection();
   //ldr============
   
   
@@ -52,13 +50,40 @@ void spinner(){
   //here comes the spinn
   //digitalWrite(13, HIGH);
   int reed_status = digitalRead(12);
-  if (reed_status == 1){
-    Serial.println("1");
-  } else{
-    Serial.println("0");
+  bool once = false;
+  
+  float timer;
+  
+  timer = millis();
+ 
+   if(oldreed == 0 && once == false){
+    if(reed_status == 1){
+      //Serial.println("1");
+      spd++;
+      oldreed = 1;
+      once = true;
+    }
+   }
+   if(oldreed == 1 && once == false){
+    if(reed_status == 0){
+   // Serial.println("0");
+    spd++;
+    oldreed = 0;
+    once = true;
+    }
+   } 
+  if(timer >= maxtimer){
+    
+  maxtimer = maxtimer + 100;
+ 
+  
+  //Serial.println(spd);
+  speedint = spd;
+  spd = 0;
   }
-
+  
 }
+
 void ldrs(){
   //ldr left
   int ldrLraw = analogRead(ldrLPin);
@@ -74,18 +99,18 @@ void ldrs(){
   int ldrRraw = analogRead(ldrRPin);
   int ldrRfinal;
   int diffR = ldrRraw - ldrRfinal;
-
+  
   if(abs(diffR) > DEAD_ZONE){
-    
      ldrRfinal = ldrRraw;
      rightint = ldrRfinal;
     
   }
-     /*Serial.println(ldrLfinal);
-     Serial.print(",");
-     Serial.println(ldrRfinal);*/
+     Serial.println(leftint);
+   // Serial.print(",");
+   Serial.println(rightint);
   //=============
   delay(10);
+  //Time.time = millis();
 }
 
 void unityconnection() {
@@ -94,9 +119,11 @@ void unityconnection() {
     char inByte = Serial.read();
 
     if(inByte == 'a'){  
-      //  Serial.print(leftint);//l1 
-      //  Serial.print(",");
-      //  Serial.println(rightint);     
+        Serial.print(leftint);//l1 
+        Serial.print(",");
+        Serial.print(rightint);    
+        Serial.print(",");
+        Serial.println(speedint);  
     }
     
       
