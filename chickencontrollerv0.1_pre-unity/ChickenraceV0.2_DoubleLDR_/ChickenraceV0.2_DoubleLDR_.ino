@@ -1,5 +1,5 @@
 //defines
-#define DEAD_ZONE (50) 
+#define DEAD_ZONE (100) 
 //INCLUDES
 #include <IRremote.h>
 //
@@ -15,8 +15,8 @@ long duration;
 //
 
 //ldrtest
-const int ldrLPin = A2;
-const int ldrRPin = A1;
+const int ldrLPin = A1;
+const int ldrRPin = A2;
 
 const int receiverinfra = 12;
 float maxtimer = 100;
@@ -25,8 +25,8 @@ float maxtimer = 100;
 void setup() {
   // put your setup code here, to run once:
   oldreed = 0;
-  pinMode(ldrLPin, INPUT);
-  pinMode(ldrRPin, INPUT);
+  pinMode(ldrLPin, INPUT_PULLUP);
+  pinMode(ldrRPin, INPUT_PULLUP);
   pinMode(receiverinfra, INPUT_PULLUP);
   //unity communication
   Serial.begin(115200);
@@ -90,27 +90,25 @@ void ldrs(){
   int ldrLfinal;
   int diffL = ldrLraw - ldrLfinal;
 
-  if(abs(diffL) > DEAD_ZONE){  
-    ldrLfinal = ldrLraw; 
+  if(abs(diffL) > DEAD_ZONE){
+    
+    ldrLfinal = ldrLraw;
     leftint = ldrLfinal;
   }
-
-  //ldr Right
-  int ldrRraw = analogRead(ldrRPin);
+   int ldrRraw = analogRead(ldrRPin);
   int ldrRfinal;
   int diffR = ldrRraw - ldrRfinal;
-  
+
   if(abs(diffR) > DEAD_ZONE){
-     ldrRfinal = ldrRraw;
-     rightint = ldrRfinal;
+    
+    ldrRfinal = ldrRraw;
+    rightint = ldrRfinal;
     
   }
-     Serial.println(leftint);
-   // Serial.print(",");
-   Serial.println(rightint);
+ 
   //=============
-  delay(10);
-  //Time.time = millis();
+
+
 }
 
 void unityconnection() {
